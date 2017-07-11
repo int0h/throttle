@@ -1,16 +1,16 @@
 export default function throttle(fn: Function, pause: number): Function {
-	let lastRunTime = -1;
+    let lastRunTime = -1;
     let lastThis: any;
     let lastArgs: any[];
     let hasTimeout = false;
 
-	function run(context: any, args: any[]) {
-		lastRunTime = Date.now();
-		fn.apply(context, args);
-	}
+    function run(context: any, args: any[]) {
+        lastRunTime = Date.now();
+        fn.apply(context, args);
+    }
 
-	return function(...args: any[]) {
-		const timePassed = Date.now() - lastRunTime;
+    return function(...args: any[]) {
+        const timePassed = Date.now() - lastRunTime;
         if (timePassed > pause) {
             run(this, args);
             return;
@@ -26,5 +26,5 @@ export default function throttle(fn: Function, pause: number): Function {
                 run(lastThis, lastArgs);
             }, delay);
         }
-	};
+    };
 }

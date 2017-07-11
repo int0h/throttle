@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "target": "es5",
+        "lib": [
+            "es5",
+            "es2015.promise",
+            "scripthost",
+            "dom"
+        ],
+        "experimentalDecorators": true,
+        "outDir": "./dist/",
+        "declaration": true,
+        "module": "commonjs",
+        "inlineSourceMap": true,
+        "inlineSources": true,
+        "watch": true
+    },
+    "include": [
+        "./src/**/*.ts",
+        "./src/tests/**.ts"
+    ]
+}

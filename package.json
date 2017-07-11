@@ -1,0 +1,11 @@
+{
+  "name": "throttle",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./dist/index.js",
+  "scripts": {
+    "test": "ava ./dist/tests/ -v"
+  },
+  "author": "int0h",
+  "license": "MIT"
+}

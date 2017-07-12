@@ -10,14 +10,19 @@ export default function throttle(fn: Function, pause: number): Function {
     }
 
     return function(...args: any[]) {
+        lastArgs = args;
+        lastThis = this;
+
+        if (hasTimeout) {
+            return;
+        }
+
         const timePassed = Date.now() - lastRunTime;
         if (timePassed > pause) {
             run(this, args);
             return;
         }
 
-        lastArgs = args;
-        lastThis = this;
         if (!hasTimeout) {
             hasTimeout = true;
             const delay = pause - timePassed;

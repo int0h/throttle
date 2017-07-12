@@ -20,12 +20,16 @@ class Timeline {
         return this.calls.reduce((acc, cur) => acc + cur) / this.calls.length;
     }
 
-    isAround(pause: number, deviation: number = 5) {
+    isAround(pause: number, deviation: number = 15) {
         return this.calls.every(i => Math.abs(i - pause) < deviation);
     }
 
-    inRange(from: number = 0, to: number = Infinity) {
-        return this.calls.every(i => from < i && i < to);
+    inRange(from: number = 0, to: number = Infinity, deviation: number = 15) {
+        return this.calls.every(i =>
+            Math.abs(from - i) < deviation
+            &&
+            Math.abs(i - to) < deviation
+        );
     }
 }
 
@@ -103,19 +107,19 @@ test.cb('recursive calls', t => {
 });
 
 test.cb('interval calls', t => {
-    t.plan(10);
     const throttled = throttle(fn, 50);
     const tl = new Timeline();
 
     const timer = setInterval(() => {
         throttled(() => {
             tl.push();
-            t.true(tl.isAround(50));
+            t.pass();
         })
-    }, 3);
+    }, 30);
 
     setTimeout(() => {
         clearInterval(timer);
+        t.true(tl.isAround(50));
         t.end();
     }, 500);
 });
@@ -146,3 +150,42 @@ test.cb('promise then', t => {
             t.end();
         });
 });
+
+test('promise async', async t => {
+    const throttled = throttle((cb: Function) => {
+        tl.push();
+        t.pass();
+        fn(cb);
+    }, 50);
+
+    const tl = new Timeline();
+
+    const promiseLike = () => new Promise(res => {
+        throttled(() => res());
+    });
+
+    t.plan(8);
+
+    let i = 7;
+    while (i--) {
+        await promiseLike();
+    }
+
+    t.true(tl.isAround(50));
+});
+
+test('while', t => {
+    const start = Date.now();
+    const tl = new Timeline();
+
+    const throttled = throttle((cb: Function) => {
+        tl.push();
+        t.pass();
+    }, 50);
+
+    while (Date.now() - start < 10) {
+        throttled();
+    }
+
+    t.true(tl.isAround(50));
+})
